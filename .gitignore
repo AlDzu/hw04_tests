@@ -144,3 +144,11 @@ dmypy.json
 .history/
 
 .mypy_cache
+yatube/static/
+yatube/sent_emails/
+
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
