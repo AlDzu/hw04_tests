@@ -58,14 +58,15 @@ class PostsPagesTests(TestCase):
                 kwargs={'post_id': f'{self.post.id}'}),
             'posts/create_post.html': reverse(
                 'posts:post_create'),
-            'posts/create_post.html': reverse(
-                'posts:post_edit',
-                kwargs={'post_id': f'{self.post.id}'})
         }
         for template, reverse_name in templates_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
                 response = self.autorized_author.get(reverse_name)
                 self.assertTemplateUsed(response, template)
+        response = self.autorized_author.get(
+            reverse('posts:post_edit', kwargs={'post_id': f'{self.post.id}'})
+        )
+        self.assertTemplateUsed(response, 'posts/create_post.html')
 
     def test_true_index(self):
         """Главная страница"""
