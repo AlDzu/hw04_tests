@@ -3,13 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
+from posts.settings import NUMBER_OF_POSTS
+
 from .forms import PostForm
 from .models import Group, Post, User
 
 
 def index(request):
     post_list = Post.objects.all()
-    paginator = Paginator(post_list, 10)
+    paginator = Paginator(post_list, NUMBER_OF_POSTS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -21,7 +23,7 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     posts = group.posts.all()
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, NUMBER_OF_POSTS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -34,16 +36,15 @@ def group_posts(request, slug):
 
 def profile(request, username):
     user_info = get_object_or_404(User, username=username)
-    # User.objects.get(username=username)
-    user_posts = user_info.posts.all()  # Post.objects.filter(author=user_info)
-    post = user_posts.count()
-    paginator = Paginator(user_posts, 10)
+    user_posts = Post.objects.filter(author=user_info)
+    # post = user_posts.count() # теперь считается в шаблоне
+    paginator = Paginator(user_posts, NUMBER_OF_POSTS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
         'user_info': user_info,  # юзверь
         'user_posts': user_posts,  # его посты
-        'post': post,  # сколько их
+        # 'post': post,  # сколько их теперь считается в шаблоне
         'page_obj': page_obj,  # что пихнуть на страницу
     }
     return render(request, 'posts/profile.html', context)
